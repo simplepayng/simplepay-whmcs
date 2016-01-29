@@ -1,0 +1,28 @@
+{
+    "name": "simplepayng/simplepay-whmcs",
+    "description": "SimplePay | Online and Mobile Payment. Secure. Simple.",
+    "keywords": [
+        "whmcs",
+        "web host automation platform",
+        "third party gateway module",
+        "gateway module",
+        "third party gateway",
+	"simplepay",
+	"simplepay payment",
+	"simplepay payment gateway",
+	"simplepay gateway"
+    ],
+    "homepage": "http://www.simplepay.ng/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SimplePay Development Team",
+            "email": "support@simplepay.ng",
+            "homepage": "http://www.simplepay.ng/",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@simplepay.ng"
+    }
+}
