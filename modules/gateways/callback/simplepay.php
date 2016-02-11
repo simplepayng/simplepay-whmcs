@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Gateway 													   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.0 					                                   *
-// * Build Date: 29 Jan 2016                                               *
+// * Version: 1.0.1 					                                   *
+// * Build Date: 11 Feb 2016                                               *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -46,22 +46,22 @@ if ($gatewayParams['testMode'] == 'on') {
  * Verify SimplePay transaction.
  */
 $data = array (
-	"api_key" => $privateKey,
-	"token" => $token
+	'token' => $token
 );
-$data_string = json_encode($data); 
+$dataString = json_encode($data); 
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, "https://checkout.simplepay.ng/v1/payments/verify/");
+curl_setopt($ch, CURLOPT_URL, 'https://checkout.simplepay.ng/v1/payments/verify/');
+curl_setopt($ch, CURLOPT_USERPWD, $privateKey . ':');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 curl_setopt($ch, CURLOPT_HEADER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
     'Content-Type: application/json',                                                                                
-    'Content-Length: ' . strlen($data_string)                                                                       
+    'Content-Length: ' . strlen($dataString)                                                                       
 ));       
 
 curl_exec($ch);

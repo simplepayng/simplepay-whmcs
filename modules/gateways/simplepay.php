@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Gateway 													   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.0 					                                   *
-// * Build Date: 29 Jan 2016                                               *
+// * Version: 1.0.1 					                                   *
+// * Build Date: 11 Feb 2016                                               *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -27,6 +27,11 @@ function simplepay_config() {
         'FriendlyName' => array(
             'Type' => 'System',
             'Value' => 'SimplePay'
+        ),
+        'testMode' => array(
+            'FriendlyName' => 'Test Mode',
+            'Type' => 'yesno',
+            'Description' => 'Tick to enable test mode'
         ),
         'privateLiveKey' => array(
             'FriendlyName' => 'Private Live Key',
@@ -52,16 +57,17 @@ function simplepay_config() {
             'Size' => '32',
             'Default' => ''
         ),
+        'customDescription' => array(
+            'FriendlyName' => 'Description',
+            'Type' => 'text',
+            'Size' => '100%',
+            'Description' => '<br/>The description that will be shown on the payment dialog with the order ID in the end.'
+        ),
         'customImage' => array(
             'FriendlyName' => 'Custom Image URL',
             'Type' => 'text',
             'Size' => '100%',
             'Description' => '<br/>A URL pointing to a square image of your brand or product. The recommended minimum size is 128x128px'
-        ),
-        'testMode' => array(
-            'FriendlyName' => 'Test Mode',
-            'Type' => 'yesno',
-            'Description' => 'Tick to enable test mode'
         )
     );
 }
@@ -95,12 +101,12 @@ function simplepay_link($params) {
 	// Config Options
 	if ($params['testMode'] == 'on') { 
 		$test_mode = 'true';
-		$public_key = $params['publicTestKey'];
-		$private_key = $params['privateTestKey'];
+		$publicKey = $params['publicTestKey'];
+		$privateKey = $params['privateTestKey'];
 	} else  { 
 		$test_mode = 'false';
-		$public_key = $params['publicLiveKey'];
-		$private_key = $params['privateLiveKey'];
+		$publicKey = $params['publicLiveKey'];
+		$privateKey = $params['privateLiveKey'];
 	}
 
 	// Redirect If Checkout From Cart
@@ -124,8 +130,8 @@ function simplepay_link($params) {
 		var amount = '" . $amount . "';
 		var currency = '" . $currency . "';
 
-		var publicKey = '" . $public_key . "';
-		var privateKey = '" . $private_key . "';
+		var publicKey = '" . $publicKey . "';
+		var privateKey = '" . $privateKey . "';
 		var email = '" . $email . "';
 		var phone = '" . $phone . "';
 		var address1 = '" . $address1 . "';
@@ -134,7 +140,9 @@ function simplepay_link($params) {
 		var city = '" . $city . "';
 		var country = '" . $country . "';
 
+		var customDescription = '" . $params['customDescription'] . "';
 		var companyName = '" . $companyName . "';
+		var image = '" . $params['customImage'] . "';
 		
 		function formatAmount(amount) {
 			var strAmount = amount.toString().split('.');
@@ -171,13 +179,18 @@ function simplepay_link($params) {
 				});
 			},
 			key: publicKey,
-			platform: 'WHMCS'
+			platform: 'WHMCS',
+			image: image
 		});
 		
+		var dialogDescription = customDescription;
+		if (!dialogDescription) {
+			dialogDescription = companyName;
+		}
 		var paymentData = {
 			email: email,
 			phone: phone,
-			description: companyName + ' - Order #' + invoiceId,
+			description: dialogDescription + ' - Order #' + invoiceId,
 			address: address1 + ' ' + address2,
 			postal_code: postalCode,
 			city: city,
