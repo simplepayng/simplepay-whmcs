@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Gateway 													   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.0 					                                   *
-// * Build Date: 29 Jan 2016                                               *
+// * Version: 1.0.2 					                                   *
+// * Build Date: 1 Mar 2016                                               *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
