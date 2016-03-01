@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Gateway 													   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.1 					                                   *
-// * Build Date: 11 Feb 2016                                               *
+// * Version: 1.0.0 					                                   *
+// * Build Date: 29 Jan 2016                                               *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -26,7 +26,7 @@ function simplepay_config() {
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'SimplePay'
+            'Value' => 'Master Card, Visa and Verve (Processed securely by SimplePay)'
         ),
         'testMode' => array(
             'FriendlyName' => 'Test Mode',
@@ -99,12 +99,10 @@ function simplepay_link($params) {
 	$companyName = $params['companyname'];
 
 	// Config Options
-	if ($params['testMode'] == 'on') { 
-		$test_mode = 'true';
+	if ($params['testMode'] == 'on') {
 		$publicKey = $params['publicTestKey'];
 		$privateKey = $params['privateTestKey'];
-	} else  { 
-		$test_mode = 'false';
+	} else  {
 		$publicKey = $params['publicLiveKey'];
 		$privateKey = $params['privateLiveKey'];
 	}
@@ -117,13 +115,14 @@ function simplepay_link($params) {
 	
 	// Check if SimplePay handle can be opened
 	if (isset($_REQUEST['simplepay'])) {
-		$start_simplepay = true;	
+		$startSimplePay = true;
 	} else {
-		$start_simplepay = false;	
+		$startSimplePay = false;
 	}
 	
 	$code = "
-	<script src='https://checkout.simplepay.ng/static/js/simplepay.js'></script>
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'></script>
+	<script src='https://checkout.simplepay.ng/simplepay.js'></script>
 	<script>
 		var invoiceId = '" . $invoiceId . "';
 		var description = '" . $description . "';
@@ -164,17 +163,21 @@ function simplepay_link($params) {
 
 		// Payment popup
 		var handler = SimplePay.configure({
-			token: function(token, reference) {
-				url = document.URL;
+			token: function(token) {
+				var url = document.URL;
 				url = url.substring(0, url.lastIndexOf('/') + 1);
+
 				$.ajax({
 					method: 'POST',
 					url: url + 'modules/gateways/callback/simplepay.php',
 					data: {
 						invoiceId: invoiceId,
-						reference: reference,
 						amount: amount,
 						token: token
+					}
+				}).success(function (data) {
+					if (data === 'success') {
+						location.reload();
 					}
 				});
 			},
@@ -201,7 +204,7 @@ function simplepay_link($params) {
 	</script>
 	";
 	
-	if ($start_simplepay == true) {
+	if ($startSimplePay == true) {
 		$code = $code . "
 		<script>
 			handler.open(SimplePay.CHECKOUT, paymentData);

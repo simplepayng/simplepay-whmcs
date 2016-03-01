@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Gateway 													   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.1 					                                   *
-// * Build Date: 11 Feb 2016                                               *
+// * Version: 1.0.0 					                                   *
+// * Build Date: 29 Jan 2016                                               *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -31,14 +31,13 @@ if (!$gatewayParams['type']) {
 
 // Retrieve data returned in payment gateway callback
 $invoiceId = $_POST["invoiceId"];
-$reference = $_POST["reference"];
 $amount = $_POST["amount"];
 $token = $_POST["token"];
 
-if ($gatewayParams['testMode'] == 'on') { 
+if ($gatewayParams['testMode'] == 'on') {
 	$privateKey = $gatewayParams['privateTestKey'];
 
-} else  { 
+} else  {
 	$privateKey = $gatewayParams['privateLiveKey'];
 }
 
@@ -48,7 +47,7 @@ if ($gatewayParams['testMode'] == 'on') {
 $data = array (
 	'token' => $token
 );
-$dataString = json_encode($data); 
+$dataString = json_encode($data);
 
 $ch = curl_init();
 
@@ -59,21 +58,23 @@ curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 curl_setopt($ch, CURLOPT_HEADER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-    'Content-Type: application/json',                                                                                
-    'Content-Length: ' . strlen($dataString)                                                                       
-));       
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($dataString)
+));
 
-curl_exec($ch);
+$curlResponse = curl_exec($ch);
+$curlResponse = preg_split("/\r\n\r\n/",$curlResponse);
+$responseContent = $curlResponse[1];
+$jsonResponse = json_decode(chop($responseContent), true);
 $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
 curl_close($ch);
 
-if ($responseCode == '200') {
+if ($responseCode == '200' && $jsonResponse['response_code'] == '20000') {
 	$success = true;
 } else {
-	$output = "Transaction ID: " . $reference 
-	. "\r\nInvoice ID: " . $invoiceId 
+	$output = "Transaction ID: " . $jsonResponse['customer_reference']
+	. "\r\nInvoice ID: " . $invoiceId
 	. "\r\nStatus: failed";
 	logTransaction($gatewayModuleName, $output, "Unsuccessful");
 	$success = false;
@@ -103,8 +104,8 @@ if ($success) {
 	 * @param string|array $debugData    Data to log
 	 * @param string $transactionStatus  Status
 	 */
-	$output = "Transaction ID: " . $reference 
-			. "\r\nInvoice ID: " . $invoiceId 
+	$output = "Transaction ID: " . $jsonResponse['customer_reference']
+			. "\r\nInvoice ID: " . $invoiceId
 			. "\r\nStatus: success";
 	logTransaction($gatewayModuleName, $output, "Successful");
 
@@ -119,6 +120,10 @@ if ($success) {
      * @param float $paymentFee      Payment fee (optional)
      * @param string $gatewayModule  Gateway module name
      */
-	addInvoicePayment($invoiceId, $reference, $amount, 0, $gatewayModuleName);
+	addInvoicePayment($invoiceId, $jsonResponse['customer_reference'], $amount, 0, $gatewayModuleName);
+
+    exit('success');
 }
+
+exit('error');
 ?>
