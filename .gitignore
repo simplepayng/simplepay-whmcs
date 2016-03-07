@@ -1,4 +1,9 @@
-# Random files
+# IDEs
+.project
+.pydevproject
+.idea
+.settings
 
+# Random files
 *~
 \#*

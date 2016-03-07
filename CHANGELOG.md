@@ -1,3 +1,7 @@
+## 1.0.3 (March 7, 2016)
+
+- Fix invoice payment button.
+
 ## 1.0.2 (March 1, 2016)
 
 - Updated verify payment
