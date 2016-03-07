@@ -1,10 +1,10 @@
 <?php
 // *************************************************************************
 // *                                                                       *
-// * SimplePay Gateway 													   *
+// * SimplePay Payment Gateway 											   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.2 					                                   *
-// * Build Date: 1 Mar 2016                                               *
+// * Version: 1.0.3                                                        *
+// * Build Date: 7 Mar 2016                                                *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -22,7 +22,8 @@ if (!defined("WHMCS")) {
  *
  * @return array
  */
-function simplepay_config() {
+function simplepay_config()
+{
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
@@ -79,48 +80,36 @@ function simplepay_config() {
  *
  * @return string
  */
-function simplepay_link($params) {
-	// Invoice
-	$invoiceId = $params['invoiceid'];
-	$description = $params["description"];
+function simplepay_link($params)
+{
+    // Invoice
+    $invoiceId = $params['invoiceid'];
+    $description = $params["description"];
     $amount = $params['amount'];
     $currency = $params['currency'];
 
     // Client
-	$email = $params['clientdetails']['email'];
-	$phone = $params['clientdetails']['phonenumber'];
-	$address1 = $params['clientdetails']['address1'];
-	$address2 = $params['clientdetails']['address2'];
-	$postalCode = $params['clientdetails']['postcode'];
-	$city = $params['clientdetails']['city'];
-	$country = $params['clientdetails']['country'];
+    $email = $params['clientdetails']['email'];
+    $phone = $params['clientdetails']['phonenumber'];
+    $address1 = $params['clientdetails']['address1'];
+    $address2 = $params['clientdetails']['address2'];
+    $postalCode = $params['clientdetails']['postcode'];
+    $city = $params['clientdetails']['city'];
+    $country = $params['clientdetails']['country'];
 
-	// System
-	$companyName = $params['companyname'];
+    // System
+    $companyName = $params['companyname'];
 
-	// Config Options
-	if ($params['testMode'] == 'on') {
-		$publicKey = $params['publicTestKey'];
-		$privateKey = $params['privateTestKey'];
-	} else  {
-		$publicKey = $params['publicLiveKey'];
-		$privateKey = $params['privateLiveKey'];
-	}
+    // Config Options
+    if ($params['testMode'] == 'on') {
+        $publicKey = $params['publicTestKey'];
+        $privateKey = $params['privateTestKey'];
+    } else {
+        $publicKey = $params['publicLiveKey'];
+        $privateKey = $params['privateLiveKey'];
+    }
 
-	// Redirect If Checkout From Cart
-	$cart = $_REQUEST['a'];
-	if ($cart == 'complete') {
-		header('Location: viewinvoice.php?id='.$invoiceId.'&simplepay');
-	} 
-	
-	// Check if SimplePay handle can be opened
-	if (isset($_REQUEST['simplepay'])) {
-		$startSimplePay = true;
-	} else {
-		$startSimplePay = false;
-	}
-	
-	$code = "
+    $code = "
 	<script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'></script>
 	<script src='https://checkout.simplepay.ng/simplepay.js'></script>
 	<script>
@@ -201,17 +190,17 @@ function simplepay_link($params) {
 			amount: formatAmount(amount),
 			currency: currency
 		};
+
+		$(function() {
+            var paymentMethod = $('select[name=\"gateway\"]').val();
+            if (paymentMethod === 'simplepay') {
+		        $('.payment-btn-container').append('<button type=\"button\" onClick=\"handler.open(SimplePay.CHECKOUT, paymentData);\">Pay with SimplePay</>');
+		    }
+		});
 	</script>
 	";
-	
-	if ($startSimplePay == true) {
-		$code = $code . "
-		<script>
-			handler.open(SimplePay.CHECKOUT, paymentData);
-		</script>
-		";	
-	}
 
-	return $code;
+    return $code;
 }
+
 ?>
