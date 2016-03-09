@@ -3,8 +3,8 @@
 // *                                                                       *
 // * SimplePay Payment Gateway 											   *
 // * Copyright 2016 SimplePay Ltd. All rights reserved.                    *
-// * Version: 1.0.2                                                        *
-// * Build Date: 7 Mar 2016                                                *
+// * Version: 1.0.4                                                        *
+// * Build Date: 9 Mar 2016                                                *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -27,12 +27,19 @@ function simplepay_config()
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Master Card, Visa and Verve (Processed securely by SimplePay)'
+            'Value' => 'Master Card, Visa and Verve (by SimplePay)'
+        ),
+        'gatewayLogs' => array(
+            'FriendlyName' => 'Gateway logs',
+            'Type' => 'yesno',
+            'Description' => 'Tick to enable gateway logs',
+            'Default' => '0'
         ),
         'testMode' => array(
             'FriendlyName' => 'Test Mode',
             'Type' => 'yesno',
-            'Description' => 'Tick to enable test mode'
+            'Description' => 'Tick to enable test mode',
+            'Default' => '0'
         ),
         'privateLiveKey' => array(
             'FriendlyName' => 'Private Live Key',

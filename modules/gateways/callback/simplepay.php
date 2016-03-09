@@ -2,8 +2,8 @@
 // *************************************************************************
 // *                                                                       *
 // * SimplePay Payment Gateway 											   *
-// * Version: 1.0.2                                                        *
-// * Build Date: 7 Mar 2016                                                *
+// * Version: 1.0.4                                                        *
+// * Build Date: 9 Mar 2016                                                *
 // *                                                                       *
 // *************************************************************************
 // *                                                                       *
@@ -72,10 +72,12 @@ curl_close($ch);
 if ($responseCode == '200' && $jsonResponse['response_code'] == '20000') {
 	$success = true;
 } else {
-	$output = "Transaction ID: " . $jsonResponse['customer_reference']
-	. "\r\nInvoice ID: " . $invoiceId
-	. "\r\nStatus: failed";
-	logTransaction($gatewayModuleName, $output, "Unsuccessful");
+	if ($gatewayParams['gatewayLogs'] == 'on') {
+		$output = "Transaction ID: " . $jsonResponse['customer_reference']
+			. "\r\nInvoice ID: " . $invoiceId
+			. "\r\nStatus: failed";
+		logTransaction($gatewayModuleName, $output, "Unsuccessful");
+	}
 	$success = false;
 }
 
@@ -103,10 +105,12 @@ if ($success) {
 	 * @param string|array $debugData    Data to log
 	 * @param string $transactionStatus  Status
 	 */
-	$output = "Transaction ID: " . $jsonResponse['customer_reference']
+	if ($gatewayParams['gatewayLogs'] == 'on') {
+		$output = "Transaction ID: " . $jsonResponse['customer_reference']
 			. "\r\nInvoice ID: " . $invoiceId
 			. "\r\nStatus: success";
-	logTransaction($gatewayModuleName, $output, "Successful");
+		logTransaction($gatewayModuleName, $output, "Successful");
+	}
 
 	/**
      * Add Invoice Payment.

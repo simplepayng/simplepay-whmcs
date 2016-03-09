@@ -1,6 +1,10 @@
+## 1.0.4 (March 9, 2016)
+
+- Added gateway logs option in settings
+
 ## 1.0.3 (March 7, 2016)
 
-- Fix invoice payment button.
+- Fix invoice payment button
 
 ## 1.0.2 (March 1, 2016)
 
